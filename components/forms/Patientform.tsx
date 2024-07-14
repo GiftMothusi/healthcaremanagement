@@ -1,4 +1,5 @@
 "use client"
+
  
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -7,6 +8,8 @@ import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import CustomFormField from "../CustomFormField"
+import SubmitButton from "../SubmitButton"
+import { useState } from "react"
 
 
 export enum FormFieldType{
@@ -17,7 +20,7 @@ export enum FormFieldType{
     DATE_PICKER = "datePicker",
     SELECT = "select",
     SKELETON= "skeleton",
-    PLACEHOLDER= "placeholder",
+   
     
 }
  
@@ -28,6 +31,10 @@ const formSchema = z.object({
 })
  
 const Patientform=()=> {
+
+
+    const [isLoading, setIsLoading] = useState();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,8 +58,11 @@ const Patientform=()=> {
         </section>
         {/**I turned FormField into a reusable component*/}
         <CustomFormField fieldType={FormFieldType.INPUT} control={form.control} name="name" label="Full name" placeholder="John Doe" iconSrc="/assets/icons/user.svg" iconAlt="user"  />
-       
-        <Button variant="outline" type="submit">Submit</Button>
+        <CustomFormField fieldType={FormFieldType.INPUT} control={form.control} name="email" label="Email" placeholder="Johndoe@gamil.com" iconSrc="/assets/icons/email.svg" iconAlt="email"  />
+        <CustomFormField fieldType={FormFieldType.PHONE_INPUT} control={form.control} name="phone" label="Phone Number" placeholder="+27"  />
+
+
+        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
     </Form>
   )

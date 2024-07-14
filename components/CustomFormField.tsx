@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React,{useState} from 'react'
 import {
     FormControl,
     FormDescription,
@@ -11,6 +11,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Control } from 'react-hook-form';
 import { FormFieldType } from './forms/Patientform';
+import Image from 'next/image';
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
+import { E164Number } from 'libphonenumber-js/core';
+
+
 
 
 
@@ -19,6 +25,8 @@ interface CustomProps {
     fieldType: FormFieldType,
     name: string,
     label: string,
+    placeholder?: string,
+    icon?: React.ReactNode,
     iconSrc?: string,
     iconAlt?: string,
     disabled?: boolean,
@@ -30,13 +38,43 @@ interface CustomProps {
 }
 
 const RenderField = ({field,props}:{field:any;props:CustomProps}) =>{
-    return (
-        <Input
-            type="text"
-            placeholder="Enter your text"
-         
-        />
-    )
+
+    const [value,setValue] = useState();
+
+    const {fieldType,iconSrc,iconAlt,placeholder}= props;
+
+      switch(fieldType){
+        case FormFieldType.INPUT:
+          return (
+            <div className='flex rounded-md border border-dark-500 bg-dark-400 p-2'>
+            {props.iconSrc &&(
+                <Image src={iconSrc} alt={iconAlt || "form-icon"} width={24} height={24} className='ml-2'/>
+            )}
+            <FormControl>
+                <Input placeholder={placeholder} {...field} className='shad-input border-0'/>
+            </FormControl>
+          </div>)
+        case FormFieldType.PHONE_INPUT:
+            return(
+                <FormControl>
+                    <PhoneInput 
+                        defaultCountry='ZA'
+                        withCountryCallingCode
+                        international
+                        placeholder={placeholder}
+                        onChange={field.onChange}
+                        value={field.value as E164Number | undefined}  
+                        className='input-phone'
+                    />
+                </FormControl>
+            )
+        
+            
+               
+            
+        default:
+          return null;
+      }
 }
 
 
