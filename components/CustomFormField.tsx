@@ -12,7 +12,9 @@ import { Control } from 'react-hook-form';
 import Image from 'next/image';
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
+import "react-datepicker/dist/react-datepicker.css";
 import { E164Number } from 'libphonenumber-js/core';
+import DatePicker from "react-datepicker";
 
 
 
@@ -31,7 +33,7 @@ interface CustomProps {
     control: Control<any>,
     fieldType: FormFieldType,
     name: string,
-    label: string,
+    label?: string,
     placeholder?: string,
     icon?: React.ReactNode,
     iconSrc?: string,
@@ -45,6 +47,7 @@ interface CustomProps {
 }
 
 const RenderField = ({field,props}:{field:any;props:CustomProps}) =>{
+
     switch(props.fieldType){
         case FormFieldType.INPUT:
           return (
@@ -60,7 +63,7 @@ const RenderField = ({field,props}:{field:any;props:CustomProps}) =>{
             return(
                 <FormControl>
                     <PhoneInput 
-                        defaultCountry='US'
+                        defaultCountry='ZA'
                         withCountryCallingCode
                         international
                         placeholder={props.placeholder}
@@ -70,9 +73,19 @@ const RenderField = ({field,props}:{field:any;props:CustomProps}) =>{
                     />
                 </FormControl>
             )
-        
+        case FormFieldType.DATE_PICKER:
+            return (
+                <div className='flex rounded-md border border-dark-500 bg-dark-400'>
+                   <Image src="/assets/icons/calendar.svg" alt="calendar" height={24} width={24} className='ml-'/>
+                   <FormControl>
+                        <DatePicker selected={field.value} onChange={(date)=>field.onChange(date)} showTimeSelect={props.showTimeSelect ?? false} dateFormat={props.dateFormat ?? "MM/dd/yyyy"} timeInputLabel="Time:" wrapperClassName='date-picker'/>
+                   </FormControl>
+                </div>
+         )
+         case FormFieldType.SKELETON:
+            return props.renderSkeleton ? props.renderSkeleton(field) : null
             
-               
+            
             
         default:
           return null;

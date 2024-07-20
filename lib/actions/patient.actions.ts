@@ -44,3 +44,17 @@ export const createUser = async (user: CreateUserParams) => {
     }
 };
 
+//Now that the user has been registered we can use some of the data on the register form 
+export const getUser = async (userId:string)=>{
+
+    try{
+
+        const user = await users.get(userId);
+
+        return parseStringify(user);
+
+    }catch(error){
+        console.log(error);
+    }
+}
+
