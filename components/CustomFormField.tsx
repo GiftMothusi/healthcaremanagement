@@ -18,8 +18,6 @@ import { E164Number } from 'libphonenumber-js/core';
 
 
 
-
-
 interface CustomProps {
     control: Control<any>,
     fieldType: FormFieldType,
@@ -47,12 +45,12 @@ const RenderField = ({field,props}:{field:any;props:CustomProps}) =>{
         case FormFieldType.INPUT:
           return (
             <div className='flex rounded-md border border-dark-500 bg-dark-400 p-2'>
-            {props.iconSrc &&(
-                <Image src={iconSrc} alt={iconAlt || "form-icon"} width={24} height={24} className='ml-2'/>
-            )}
-            <FormControl>
-                <Input placeholder={placeholder} {...field} className='shad-input border-0'/>
-            </FormControl>
+                {props.iconSrc &&(
+                    <Image src={iconSrc} alt={iconAlt || "form-icon"} width={24} height={24} className='ml-2'/>
+                )}
+                <FormControl>
+                    <Input placeholder={placeholder} {...field} className='shad-input border-0'/>
+                </FormControl>
           </div>)
         case FormFieldType.PHONE_INPUT:
             return(
