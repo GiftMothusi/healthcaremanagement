@@ -8,7 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import CustomFormField, { FormFieldType } from '../CustomFormField';
-import { UserFormValidation } from "@/lib/validation";
+import { getAppointmentSchema } from "@/lib/validation";
+import { updateAppointment,createAppointment } from '@/lib/actions/appointment.actions';
 import { useRouter } from 'next/navigation';
 import { SelectItem } from '@/components/ui/select';
 import { Doctors } from '@/constants';
@@ -29,34 +30,38 @@ const AppointmentForm = ({ userId,
     setOpen?: Dispatch<SetStateAction<boolean>>;}) => {
 
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);   
+    const [isLoading, setIsLoading] = useState(false);  
+    
+    const AppointmentFormValidation = getAppointmentSchema(type)
 
-    const form = useForm<z.infer<typeof UserFormValidation>>({
-    resolver: zodResolver(UserFormValidation),
+    const form = useForm<z.infer<typeof AppointmentFormValidation>>({
+    resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-        name: "",
-        email: "",
-        phone: "",
+        primaryPhysician: appointment ? appointment?.primaryPhysician : "",
+        schedule: appointment
+          ? new Date(appointment?.schedule!)
+          : new Date(Date.now()),
+        reason: appointment ? appointment.reason : "",
+        note: appointment?.note || "",
+        cancellationReason: appointment?.cancellationReason || "",
     },
     });      
-    const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
+    const onSubmit = async (values: z.infer<typeof AppointmentFormValidation>) => {
         setIsLoading(true);
     
-        try {
-          const user = {
-            name: values.name,
-            email: values.email,
-            phone: values.phone,
-          };
-    
-          const newUser = await createUser(user);
-    
-          if (newUser) {
-            router.push(`/patients/${newUser.$id}/register`);
-          }
-        } catch (error) {
-          console.log(error);
+        let status;
+        switch (type) {
+          case "schedule":
+            status = "scheduled";
+            break;
+          case "cancel":
+            status = "cancelled";
+            break;
+          default:
+            status = "pending";
         }
+
+        
     
         setIsLoading(false);
       };
